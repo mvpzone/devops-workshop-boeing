@@ -45,6 +45,9 @@ applications:
 
 == PCF Dev
 `cf dev start -s scs`
+
 `./pcfdev-helper.sh setup-spaces`
+
 `cf target -o pcfdev-org -s pcfdev-prod`
+
 `cf create-service p-service-registry standard github-eureka`
