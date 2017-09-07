@@ -1,0 +1,50 @@
+= Spring Cloud Pipelines
+
+== Docker
+On Mac, download [Docker for Mac] from docker website and use the native instance (no virtualbox)
+Your docker instance runs at 127.0.0.1 (subsequently use that IP instead of 192.168.99.100 as mentioned in the SCP docs)
+
+== credentials.yml
+increase app memory limit
+```
+app-memory-limit: 512m
+```
+create an SSH key in github and add it like this:
+```
+github-private-key: |
+  -----BEGIN RSA PRIVATE KEY-----
+...
+  -----END RSA PRIVATE KEY-----
+```
+
+== Concourse & Artifactory
+Change Artifactory docker image
+```
+artifactory:
+  image: docker.bintray.io/jfrog/artifactory-oss:latest
+  ports:
+    - "8081:8081"
+```
+After `start.sh` open Artifactory web UI and initialize a Maven repo
+
+== Webhook
+Fork github-webhook
+Increase memory limit in manifest.yml:
+```
+---
+applications:
+- name: github-webhook
+  memory: 512M
+  services:
+    - github-rabbitmq
+    - github-eureka
+  env:
+    SPRING_PROFILES_ACTIVE: cloud
+    DEBUG: "true"
+```
+
+== PCF Dev
+cf dev start -s scs
+./pcfdev-helper.sh setup-spaces
+cf target -o pcfdev-org -s pcfdev-prod
+cf create-service p-service-registry standard github-eureka
